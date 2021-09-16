@@ -15,8 +15,10 @@ async function main() {
     waveTxn = await waveContract.wave("Another message");
     await waveTxn.wait();
 
+    contractBalance = await hre.ethers.provider.getBalance(waveContract.address);
+    console.log("Contract balance:", hre.ethers.utils.formatEther(contractBalance));
+
     let allWaves = await waveContract.getAllWaves();
-    console.log("All waves:", allWaves);
 
     let userWaves= await waveContract.getUserWaves(owner.address);
     console.log("User waves:", userWaves);
