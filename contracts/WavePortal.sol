@@ -6,6 +6,8 @@ import "hardhat/console.sol";
 
 contract WavePortal {
     uint totalWaves;
+    uint private seed;
+
     mapping (address => uint) userWaves;
 
     event NewWave(address indexed from, uint timestamp, string message);
@@ -15,6 +17,7 @@ contract WavePortal {
         uint timestamp;
     }
     Wave[] waves;
+    
 
     constructor() payable {
         console.log("This is a test smart contract");
@@ -26,10 +29,18 @@ contract WavePortal {
         waves.push(Wave(msg.sender, _message, block.timestamp));
         emit NewWave(msg.sender, block.timestamp, _message);
 
-        uint prizeAmount = 0.0001 ether;
-        require(prizeAmount <= address(this).balance, "Insufficient funds");
-        (bool success,) = (msg.sender).call{value: prizeAmount}("");
-        require(success, "Failed to send ether");
+        uint randomNumber = (block.difficulty + block.timestamp + seed) % 100;
+        console.log("Random number: %s", randomNumber);
+
+        seed = randomNumber;
+
+        if (randomNumber < 50) {
+            console.log("%s won!", msg.sender);
+            uint prizeAmount = 0.0001 ether;
+            require(prizeAmount <= address(this).balance, "Insufficient funds");
+            (bool success,) = (msg.sender).call{value: prizeAmount}("");
+            require(success, "Failed to send ether");
+        }
     }
     function getAllWaves() view public returns (Wave[] memory) {
         return waves;
