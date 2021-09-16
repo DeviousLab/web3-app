@@ -6,17 +6,20 @@ async function main() {
     console.log("Contract deployed to:", waveContract.address);
     console.log("Contract deployed by:", owner.address);
 
-    let waveCount;
-    waveCount = await waveContract.getTotalWaves();
+    let waveCount = await waveContract.getTotalWaves();
+    console.log("Total waves:", waveCount.toNumber());
 
-    let waveTxn = await waveContract.wave();
+    let waveTxn = await waveContract.wave("A message");
     await waveTxn.wait();
 
-    let userWaves;
-    userWaves = await waveContract.getUserWaves(owner.address);
+    waveTxn = await waveContract.wave("Another message");
+    await waveTxn.wait();
 
-    waveCount = await waveContract.getTotalWaves();
-    
+    let allWaves = await waveContract.getAllWaves();
+    console.log("All waves:", allWaves);
+
+    let userWaves= await waveContract.getUserWaves(owner.address);
+    console.log("User waves:", userWaves);
 }
 
 main()
